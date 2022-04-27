@@ -1,7 +1,5 @@
 from cmath import inf
 
-from numpy import matrix
-
 class Hungarian():
     def __init__(self,matrix):
         self.matrix = matrix # matrix[task][machine] = cost
