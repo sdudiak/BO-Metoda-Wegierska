@@ -1,79 +1,94 @@
-from cmath import inf
+class Whatever:
+    def __init__(self, m):
+        self.matrix = m
+
+    def zeroCover(self):
+        self.assigned = []  # starred zeros
+        self.markedRows = []  # row with starred zero
+        self.markedCols = []  # col with starred zero
+        self.coveredCols = []  # line covering col
+        self.coveredRows = []  # line covering row
+        self.primedZeros = []  # primed zero
+        self.assign()
+        self.cover()
+        self.nCover()
+        # self.coveredRows = []
+        # self.coveredCols = []
+        self.assign()
+        self.coverStar()
+        self.cover()
+
+        return f"starred: {self.assigned} cRow: {self.coveredRows}  cCol: {self.coveredCols} primed: {self.primedZeros}"
+
+    def assign(self):
+        for row in range(len(self.matrix)):
+            for col in range(len(self.matrix)):
+                # starring zero and covering columns
+                if (row not in self.markedRows) and (col not in self.markedCols) and (self.matrix[row][col] == 0):
+                    self.assigned.append((row, col))
+                    self.markedRows.append(row)
+                    self.markedCols.append(col)
+                    self.coveredCols.append(col)
+
+    def cover(self):
+        for row in range(len(self.matrix)):
+            for col in range(len(self.matrix)):
+                if (row not in self.coveredRows) and (col not in self.coveredCols) and (row in self.markedRows) and ((row, col) not in self.assigned) and (self.matrix[row][col] == 0):
+                    self.primedZeros.append((row, col))
+                    self.coveredRows.append(row)
+                    for i in self.assigned:
+                        if i[0] == row and i[1] in self.coveredCols:
+                            self.coveredCols.remove(i[1])
+
+    def nCover(self):
+        for row in range(len(self.matrix)):
+            for col in range(len(self.matrix)):
+                if (row not in self.coveredRows) and (col not in self.coveredCols) and (row not in self.markedRows) and (self.matrix[row][col] == 0):
+                    if col in self.markedCols:
+                        for star in self.assigned:
+                            if star[1] == col:
+                                for prime in self.primedZeros:
+                                    if prime[0] == star[0]:
+                                        self.assigned.remove(
+                                            (star[0], star[1]))
+                                        self.primedZeros.remove(
+                                            (prime[0], prime[1]))
+                                        self.assigned.append(
+                                            (prime[0], prime[1]))
+                                        if star[0] in self.coveredRows:
+                                            self.coveredRows.remove(star[0])
+                                        else:
+                                            self.coveredCols.remove(star[1])
+                                        if star[0] in self.markedRows:
+                                            self.markedRows.remove(star[0])
+                                            self.markedRows.append(prime[0])
+                                        if star[1] in self.markedCols:
+                                            self.markedCols.remove(star[1])
+                                            self.markedCols.append(prime[1])
+
+    def coverStar(self):
+        for row in range(len(self.matrix)):
+            for col in range(len(self.matrix)):
+                if (row not in self.coveredRows) and (col not in self.coveredCols) and ((row, col) in self.assigned):
+                    self.coveredCols.append(col)
+
+# mat = [
+#     [0, 4, 2, 7, 0, 1],
+#     [5, 2, 8, 1, 0, 2],
+#     [7, 3, 0, 7, 1, 0],
+#     [8, 5, 1, 0, 6, 8],
+#     [0, 5, 2, 7, 0, 4],
+#     [1, 4, 0, 5, 2, 0]
+# ]
 
 
-class Hungarian:
-    def __init__(self, matrix):
-        self.matrix = matrix  # matrix[task][machine] = cost
-        self.theta = 0  # total matrix reduction
-
-    def reduce_matrix(self):  # method subtracting lowest values from rows and columns
-        # rows:
-        for i, _ in enumerate(self.matrix):
-            self.theta += min(self.matrix[i])
-            self.matrix[i] = [elem - min(self.matrix[i]) for elem in self.matrix[i]]
-        # cols:
-        for j, _ in enumerate(self.matrix):
-            min_col_val = inf
-            for i, _ in enumerate(self.matrix[i]):  # find minimal value
-                if self.matrix[i][j] < min_col_val: min_col_val = self.matrix[i][j]
-
-            self.theta += min_col_val
-
-            for i, _ in enumerate(self.matrix[i]):  # subtract minimal value
-                self.matrix[i][j] -= min_col_val
-
-
-matrix_example = [
-    [0, 0, 1, 0, 5],
-    [1, 6, 2, 0, 3],
-    [1, 2, 1, 5, 0],
-    [3, 9, 0, 4, 0],
-    [1, 1, 2, 4, 0]
+mat = [
+    [0, 1, 0, 1],
+    [1, 0, 1, 0],
+    [0, 1, 1, 1],
+    [0, 1, 1, 1]
 ]
 
-independent_zeros = [(0, 0), (1, 3), (2, 4), (3, 2)]
-dependent_zeros = [(0, 1), (0, 3), (3, 4), (4, 4)]
 
-
-def zero_crossing(matrix, ind_zeros, dep_zeros):
-    select_row = [i for i in range(len(matrix))]
-    select_col = []
-    # Oznaczyć symbolem x każdy wiersz nie posiadający niezależnego zera
-    for el in ind_zeros:
-        select_row.remove(el[0])
-
-    while True:
-        selected = False
-        # Oznaczyć symbolem x każda kolumnę mającą zero zależne 0 w oznaczonym wierszu
-        for row in select_row:
-            # for col in matrix[row]:
-            for col in range(len(matrix[row])):
-                for zero in dep_zeros:
-                    if zero[0] == row and zero[1] == col:
-                        if col not in select_col:
-                            select_col.append(col)
-                            selected = True
-
-        # Oznaczyć symbolem x każdy wiersz mający w oznakowanej kolumnie niezależne zero
-        for col in select_col:
-            for row in range(len(matrix)):
-                for zero in ind_zeros:
-                    if zero[0] == row and zero[1] == col:
-                        if row not in select_row:
-                            select_row.append(row)
-                            selected = True
-        if not selected:
-            break
-
-    # Poszukiwanie minimalnego pokrycia wierzchołkowego.
-    cross_col = select_col
-    cross_col.sort()
-    cross_row = []
-    for i in range(len(matrix)):
-        if i not in select_row:
-            cross_row.append(i)
-    cross_row.sort()
-    return cross_row, cross_col
-
-
-print(zero_crossing(matrix_example, independent_zeros, dependent_zeros))
+a = Whatever(mat)
+print(a.zeroCover())
