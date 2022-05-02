@@ -56,12 +56,12 @@ class Hungarian:
                                 ind_zeros.append((idx, idy))  # dodaj do zer niezależnych
                                 break
 
-            # dodanie zer zależnych
-            for row in range(size):  # dla każdego wiersza
-                for col in range(size):  # dla każdej kolumny
-                    # jeśli znaleziono zero i nie jest to zero niezależne
-                    if self.matrix[row][col] == 0 and (row, col) not in ind_zeros:
-                        dep_zeros.append((row, col))  # znaleziono zero zależne
+        # dodanie zer zależnych
+        for row in range(size):  # dla każdego wiersza
+            for col in range(size):  # dla każdej kolumny
+                # jeśli znaleziono zero i nie jest to zero niezależne lub niezależne
+                if self.matrix[row][col] == 0 and (row, col) not in ind_zeros:
+                    dep_zeros.append((row, col))  # znaleziono zero zależne
 
         self.ind_zeros = ind_zeros
         self.dep_zeros = dep_zeros
@@ -198,5 +198,5 @@ matrix = [
     [1, 0, 2, 4, 2, 3]
 ]
 
-m = Hungarian(matrix_e)
+m = Hungarian(matrix)
 m.algorithm()
