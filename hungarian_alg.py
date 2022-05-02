@@ -9,6 +9,10 @@ class Hungarian:
         self.dep_zeros = []  # dependent zeros  (primed)
         self.cross_row = []  # crossed row
         self.cross_col = []  # crossed column
+        self.assigned = []  # starred zeros
+        self.markedRows = []  # row with starred zero
+        self.markedCols = []  # col with starred zero
+        self.primedZeros = []  # primed zero
 
     def reduce_matrix(self):  # method subtracting lowest values from rows and columns
         # rows:
@@ -25,23 +29,27 @@ class Hungarian:
 
             for i, _ in enumerate(self.matrix[j]):  # subtract minimal value
                 self.matrix[i][j] -= min_col_val
-            
-    def get_more_independent_zeros(self): # method for further matrix reduction
-        min_matrix_val = inf
-        for i,_ in enumerate(self.matrix): # find minimal value uncrossed value in matrix
-            for j,_ in enumerate(self.matrix[i]):
-                if i not in self.cross_row and j not in self.cross_col and self.matrix[i][j] < min_matrix_val:
-                    min_matrix_val = self.matrix[i][j]
-        print(min_matrix_val)
-        # add minval
-        for i,_  in enumerate(self.matrix): # subtract minimal value from uncrossed elems
-            for j,_ in enumerate(self.matrix[i]):
-                if i in self.cross_row and j not in self.cross_col : continue
-                if i in self.cross_row and j in self.cross_col: 
-                    self.matrix[i][j] += min_matrix_val # add minimal value to double crossed elements
-                if j in self.cross_col : continue
-                self.matrix[i][j] -= min_matrix_val
-        self.theta += min_matrix_val
+
+    def zeroCover(self):
+        self.assigned = []  # starred zeros
+        self.markedRows = []  # row with starred zero
+        self.markedCols = []  # col with starred zero
+        self.primedZeros = []  # primed zero
+        self.assign()
+        # return f"starred: {self.assigned} primed: {self.primedZeros}"
+        self.ind_zeros = self.assigned
+        self.dep_zeros = self.primedZeros
+
+    def assign(self):
+        for row in range(len(self.matrix)):
+            for col in range(len(self.matrix)):
+                # starring zero and covering columns
+                if (row not in self.markedRows) and (col not in self.markedCols) and (self.matrix[row][col] == 0):
+                    self.assigned.append((row, col))
+                    self.markedRows.append(row)
+                    self.markedCols.append(col)
+                if ((row, col) not in self.assigned) and (self.matrix[row][col] == 0):
+                    self.primedZeros.append((row, col))
 
     def zero_crossing(self):
         select_row = [i for i in range(len(self.matrix))]
@@ -84,18 +92,54 @@ class Hungarian:
         self.cross_row = cross_row
         self.cross_col = cross_col
 
+    def get_more_independent_zeros(self):  # method for further matrix reduction
+        min_matrix_val = inf
+        for i, _ in enumerate(self.matrix):  # find minimal value uncrossed value in matrix
+            for j, _ in enumerate(self.matrix[i]):
+                if i not in self.cross_row and j not in self.cross_col and self.matrix[i][j] < min_matrix_val:
+                    min_matrix_val = self.matrix[i][j]
+        # add minval
+        for i, _ in enumerate(self.matrix):  # subtract minimal value from uncrossed elems
+            for j, _ in enumerate(self.matrix[i]):
+                if i in self.cross_row and j not in self.cross_col: continue
+                if i in self.cross_row and j in self.cross_col:
+                    self.matrix[i][j] += min_matrix_val  # add minimal value to double crossed elements
+                if j in self.cross_col: continue
+                self.matrix[i][j] -= min_matrix_val
+        self.theta += min_matrix_val
+
     def algorithm(self):
+        print("Macierz wejściowa:")
+        for row in self.matrix:
+            print(row)
+        print()
+
         self.reduce_matrix()
+        print("Macierz po początkowej redukcji")
+        for row in self.matrix:
+            print(row)
+        print("Wielkość redukcji macierzy: {}\n".format(self.theta))
 
         while True:
-            # Miejsce na funkcje wyznaczającą zera
+            self.zeroCover()
+            print("Wyznaczone zera:")
+            print("Współrzędne zer niezależnych: {}".format(self.ind_zeros))
+            print("Współrzędne zer zależnych: {}\n".format(self.dep_zeros))
+            # if len(self.ind_zeros) == len(self.matrix):
+            #     return self.ind_zeros
 
             self.zero_crossing()
+            print("Wiersze do wykreślenia: {}".format(self.cross_row))
+            print("Kolumny do wykreślenia: {}\n".format(self.cross_col))
+
             if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
                 return self.ind_zeros
             self.get_more_independent_zeros()
+            print("Macierz po powiększeniu zbioru zer niezależnych")
+            for row in self.matrix:
+                print(row)
+            print("Wielkość redukcji macierzy: {}\n".format(self.theta))
 
-        
 
 matrix_e = [
     [5, 2, 3, 2, 7],
@@ -106,30 +150,4 @@ matrix_e = [
 ]
 
 m = Hungarian(matrix_e)
-m.reduce_matrix()
-for i in m.matrix:
-    print(i)
-print(m.theta)
-print()
-
-m.ind_zeros = [(0, 0), (1, 3), (2, 4), (3, 2)]
-m.dep_zeros = [(0, 1), (0, 3), (3, 4), (4, 4)]
-m.zero_crossing()
-# print(m.cross_row)
-# print(m.cross_col)
-# print()
-
-m.get_more_independent_zeros()
-
-for i in m.matrix:
-    print(i)
-print(m.theta)
-print()
-
-# matrix_example = [
-#     [0, 0, 1, 0, 5],
-#     [1, 6, 2, 0, 3],
-#     [1, 2, 1, 5, 0],
-#     [3, 9, 0, 4, 0],
-#     [1, 1, 2, 4, 0]
-# ]
+m.algorithm()
