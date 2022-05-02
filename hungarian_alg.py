@@ -8,7 +8,6 @@ class Whatever:
         self.markedCols = []  # col with starred zero
         self.primedZeros = []  # primed zero
         self.assign()
-        self.dep()
 
         return f"starred: {self.assigned} primed: {self.primedZeros}"
 
@@ -20,12 +19,9 @@ class Whatever:
                     self.assigned.append((row, col))
                     self.markedRows.append(row)
                     self.markedCols.append(col)
-
-    def dep(self):
-        for row in range(len(self.matrix)):
-            for col in range(len(self.matrix)):
                 if ((row, col) not in self.assigned) and (self.matrix[row][col] == 0):
                     self.primedZeros.append((row, col))
+
 
 # mat = [
 #     [0, 4, 2, 7, 0, 1],
