@@ -79,6 +79,7 @@ class Hungarian:
 
             # Miejsce na funkcje kroku 4
 
+
 matrix_e = [
     [5, 2, 3, 2, 7],
     [6, 8, 4, 2, 5],
