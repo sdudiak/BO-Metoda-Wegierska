@@ -30,7 +30,7 @@ class Hungarian:
         min_matrix_val = inf
 
         for i,_ in enumerate(self.matrix): # find minimal value uncrossed value in matrix
-            for j in enumerate(self.matrix[i]):
+            for j,_ in enumerate(self.matrix[i]):
                 if i not in self.cross_row and j not in self.cross_col and self.matrix[i][j] < min_matrix_val:
                     min_matrix_val = self.matrix[i][j]
         # add minval
