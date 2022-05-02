@@ -178,7 +178,7 @@ class Hungarian:
         print("Rozwiązanie optymalne")
         for row in result:
             print(row)
-        print("Wartość funkcji kryterialnej: {}\n".format(self.theta))
+        print("Optymalny koszt przydziału: {}\n".format(self.theta))
 
 
 matrix_e = [
