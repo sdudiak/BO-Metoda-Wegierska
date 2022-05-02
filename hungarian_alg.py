@@ -137,27 +137,27 @@ class Hungarian:
             print(row)
         print()
 
-        self.reduce_matrix()
+        self.reduce_matrix()  # zredukowanie macierzy
         print("Macierz po początkowej redukcji")
         for row in self.matrix:
             print(row)
         print("Wielkość redukcji macierzy: {}\n".format(self.theta))
 
         while True:
-            self.assign()
+            self.assign()  # wyznaczenie zer niezaleznych i zależnych
             print("Wyznaczone zera:")
             print("Współrzędne zer niezależnych: {}".format(self.ind_zeros))
             print("Współrzędne zer zależnych: {}\n".format(self.dep_zeros)) if self.dep_zeros else print()
             if len(self.ind_zeros) == len(self.matrix):
                 break
 
-            self.zero_crossing()
+            self.zero_crossing()  # wyznaczenie wierszy i kolumn do zakreślenia
             print("Wiersze do wykreślenia: {}".format(self.cross_row))
             print("Kolumny do wykreślenia: {}\n".format(self.cross_col))
 
             # if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
             #     break
-            self.get_more_independent_zeros()
+            self.get_more_independent_zeros()  # wyznaczenie wiecej zer niezależnych
             print("Macierz po powiększeniu zbioru zer niezależnych")
             for row in self.matrix:
                 print(row)
@@ -168,12 +168,12 @@ class Hungarian:
             print(row)
         print()
 
-        result = [[0 for i in range(len(self.matrix))] for j in range(len(self.matrix))]
-        for i in range(len(self.matrix)):
-            for j in range(len(self.matrix)):
-                for z in self.ind_zeros:
-                    if z[0] == i and z[1] == j:
-                        result[i][j] = 1
+        # stworzenie tablicy rozwiązania optymalnego
+        result = [[0 for i in range(len(self.matrix))] for j in range(len(self.matrix))]  # stworzenie macierzy zer
+        for row in range(len(self.matrix)):  # dla każdego wiersza
+            for col in range(len(self.matrix)):  # dla każdej  kolumny
+                if (row, col) in self.ind_zeros:  # jesli współrzędne to współrzędne zera niezależnego
+                    result[row][col] = 1  # zmień zero na 1
 
         print("Rozwiązanie optymalne")
         for row in result:
@@ -198,5 +198,5 @@ matrix = [
     [1, 0, 2, 4, 2, 3]
 ]
 
-m = Hungarian(matrix)
+m = Hungarian(matrix_e)
 m.algorithm()
