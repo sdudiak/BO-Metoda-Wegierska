@@ -28,7 +28,7 @@ class Hungarian:
             
     def get_more_independent_zeros(self): # method for further matrix reduction
         min_matrix_val = inf
-
+        print("...")
         for i,_ in enumerate(self.matrix): # find minimal value uncrossed value in matrix
             for j,_ in enumerate(self.matrix[i]):
                 if i not in self.cross_row and j not in self.cross_col and self.matrix[i][j] < min_matrix_val:
@@ -110,10 +110,10 @@ matrix_e = [
 
 m = Hungarian(matrix_e)
 m.reduce_matrix()
-for i in m.matrix:
-    print(i)
-print(m.theta)
-print()
+# for i in m.matrix:
+#     print(i)
+# print(m.theta)
+# print()
 
 m.ind_zeros = [(0, 0), (1, 3), (2, 4), (3, 2)]
 m.dep_zeros = [(0, 1), (0, 3), (3, 4), (4, 4)]
@@ -122,6 +122,10 @@ print(m.cross_row)
 print(m.cross_col)
 
 m.get_more_independent_zeros()
+for i in m.matrix:
+    print(i)
+print(m.theta)
+print()
 # for i in m.matrix:
 #     print(i)
 
