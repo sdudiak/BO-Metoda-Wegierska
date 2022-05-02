@@ -96,7 +96,6 @@ class Hungarian:
             self.zero_crossing()
             if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
                 return self.ind_zeros
-
             self.get_more_independent_zeros()
 
         
