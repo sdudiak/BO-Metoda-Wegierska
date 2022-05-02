@@ -163,11 +163,6 @@ class Hungarian:
                 print(row)
             print("Wielkość redukcji macierzy: {}\n".format(self.theta))
 
-        print("Macierz końcowa")
-        for row in self.matrix:
-            print(row)
-        print()
-
         # stworzenie tablicy rozwiązania optymalnego
         result = [[0 for i in range(len(self.matrix))] for j in range(len(self.matrix))]  # stworzenie macierzy zer
         for row in range(len(self.matrix)):  # dla każdego wiersza
