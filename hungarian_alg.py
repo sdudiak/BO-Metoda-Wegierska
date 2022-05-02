@@ -42,28 +42,30 @@ class Hungarian:
                         ind_zeros.append((idx, idy))
 
         # Kolejna iteracja w celu znalezienia zera niezależnego w wierszach z większą ilością zer
-        for idx, row in enumerate(self.matrix):
-            added = False
-            for idy, col in enumerate(row):
-                if col == 0 and not added and idy not in [el[1] for el in ind_zeros]:
-                    another_zero_in_col = False
-                    for row_in_col in range(size):
-                        if self.matrix[row_in_col][idy] == 0 and row_in_col != row:
-                            another_zero_in_col = True
-                    if not another_zero_in_col:
-                        added = True
-                        ind_zeros.append((idx, idy))
+        for number in range(2, size):
+            for idx, row in enumerate(self.matrix):
+                if row.count(0) == number:
+                    added = False
+                    for idy, col in enumerate(row):
+                        if col == 0 and not added and idy not in [el[1] for el in ind_zeros]:
+                            another_zero_in_col = False
+                            for row_in_col in range(size):
+                                if self.matrix[row_in_col][idy] == 0 and row_in_col != row:
+                                    another_zero_in_col = True
+                            if not another_zero_in_col:
+                                added = True
+                                ind_zeros.append((idx, idy))
 
-            if not added:
-                for idy, col in enumerate(row):
-                    if col == 0 and idy not in [el[1] for el in ind_zeros]:
-                        ind_zeros.append((idx, idy))
-                        break
+                    if not added:
+                        for idy, col in enumerate(row):
+                            if col == 0 and idy not in [el[1] for el in ind_zeros]:
+                                ind_zeros.append((idx, idy))
+                                break
 
-        for row in range(size):
-            for col in range(size):
-                if self.matrix[row][col] == 0 and (row, col) not in ind_zeros:
-                    dep_zeros.append((row, col))
+            for row in range(size):
+                for col in range(size):
+                    if self.matrix[row][col] == 0 and (row, col) not in ind_zeros:
+                        dep_zeros.append((row, col))
 
         self.ind_zeros = ind_zeros
         self.dep_zeros = dep_zeros
@@ -192,10 +194,10 @@ matrix_e = [
 matrix_2 = [
     [3, 2, 4, 5, 2, 1],
     [7, 3, 4, 5, 1, 1],
-    [2, 2, 3, 4, 5, 6],
+    [2, 2, 3, 3, 5, 6],
     [1, 3, 4, 5, 6, 2],
-    [2, 1, 3, 2, 4, 5],
-    [4, 4, 2, 0, 2, 3]
+    [2, 1, 3, 3, 4, 5],
+    [1, 0, 2, 4, 2, 3]
 ]
 
 m = Hungarian(matrix_2)
