@@ -121,6 +121,10 @@ m.zero_crossing()
 print(m.cross_row)
 print(m.cross_col)
 
+m.get_more_independent_zeros()
+# for i in m.matrix:
+#     print(i)
+
 # matrix_example = [
 #     [0, 0, 1, 0, 5],
 #     [1, 6, 2, 0, 3],
