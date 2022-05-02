@@ -7,6 +7,8 @@ class Hungarian:
         self.theta = 0  # total matrix reduction
         self.ind_zeros = []  # independent zeros (starring)
         self.dep_zeros = []  # dependent zeros  (primed)
+        self.cross_row = []  # crossed row
+        self.cross_col = []  # crossed column
 
     def reduce_matrix(self):  # method subtracting lowest values from rows and columns
         # rows:
@@ -62,8 +64,20 @@ class Hungarian:
             if i not in select_row:
                 cross_row.append(i)
         cross_row.sort()
-        return cross_row, cross_col
+        self.cross_row = cross_row
+        self.cross_col = cross_col
 
+    def algorithm(self):
+        self.reduce_matrix()
+
+        while True:
+            # Miejsce na funkcje wyznaczającą zera
+
+            self.zero_crossing()
+            if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
+                return self.ind_zeros
+
+            # Miejsce na funkcje kroku 4
 
 matrix_e = [
     [5, 2, 3, 2, 7],
@@ -79,9 +93,12 @@ for i in m.matrix:
     print(i)
 print(m.theta)
 print()
+
 m.ind_zeros = [(0, 0), (1, 3), (2, 4), (3, 2)]
 m.dep_zeros = [(0, 1), (0, 3), (3, 4), (4, 4)]
-print(m.zero_crossing())
+m.zero_crossing()
+print(m.cross_row)
+print(m.cross_col)
 
 # matrix_example = [
 #     [0, 0, 1, 0, 5],
