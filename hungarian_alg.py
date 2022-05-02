@@ -28,23 +28,20 @@ class Hungarian:
             
     def get_more_independent_zeros(self): # method for further matrix reduction
         min_matrix_val = inf
-        print("...")
         for i,_ in enumerate(self.matrix): # find minimal value uncrossed value in matrix
             for j,_ in enumerate(self.matrix[i]):
                 if i not in self.cross_row and j not in self.cross_col and self.matrix[i][j] < min_matrix_val:
                     min_matrix_val = self.matrix[i][j]
+        print(min_matrix_val)
         # add minval
-        multiplicator = 1 # how many times multiply min value
         for i,_  in enumerate(self.matrix): # subtract minimal value from uncrossed elems
-            if i in self.cross_row : continue
             for j,_ in enumerate(self.matrix[i]):
+                if i in self.cross_row and j not in self.cross_col : continue
                 if i in self.cross_row and j in self.cross_col: 
                     self.matrix[i][j] += min_matrix_val # add minimal value to double crossed elements
-                    multiplicator -= 1
                 if j in self.cross_col : continue
                 self.matrix[i][j] -= min_matrix_val
-                multiplicator += 1
-        self.theta += multiplicator * min_matrix_val
+        self.theta += min_matrix_val
 
     def zero_crossing(self):
         select_row = [i for i in range(len(self.matrix))]
@@ -110,24 +107,24 @@ matrix_e = [
 
 m = Hungarian(matrix_e)
 m.reduce_matrix()
-# for i in m.matrix:
-#     print(i)
-# print(m.theta)
-# print()
-
-m.ind_zeros = [(0, 0), (1, 3), (2, 4), (3, 2)]
-m.dep_zeros = [(0, 1), (0, 3), (3, 4), (4, 4)]
-m.zero_crossing()
-print(m.cross_row)
-print(m.cross_col)
-
-m.get_more_independent_zeros()
 for i in m.matrix:
     print(i)
 print(m.theta)
 print()
-# for i in m.matrix:
-#     print(i)
+
+m.ind_zeros = [(0, 0), (1, 3), (2, 4), (3, 2)]
+m.dep_zeros = [(0, 1), (0, 3), (3, 4), (4, 4)]
+m.zero_crossing()
+# print(m.cross_row)
+# print(m.cross_col)
+# print()
+
+m.get_more_independent_zeros()
+
+for i in m.matrix:
+    print(i)
+print(m.theta)
+print()
 
 # matrix_example = [
 #     [0, 0, 1, 0, 5],
