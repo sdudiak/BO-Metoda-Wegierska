@@ -34,9 +34,7 @@ class Hungarian:
         size = len(self.matrix)
         # Pierwsza iteracja w celu znalezienia pojedynczych zer niezależnych w wierszu
         for idx, row in enumerate(self.matrix):
-            if row.count(0) == 0:
-                continue
-            elif row.count(0) == 1:
+            if row.count(0) == 1:
                 for idy, col in enumerate(row):
                     if col == 0 and idy not in [el[1] for el in ind_zeros]:
                         ind_zeros.append((idx, idy))
