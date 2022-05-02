@@ -120,10 +120,13 @@ m.dep_zeros = [(0, 1), (0, 3), (3, 4), (4, 4)]
 m.zero_crossing()
 print(m.cross_row)
 print(m.cross_col)
+print()
 
 m.get_more_independent_zeros()
-# for i in m.matrix:
-#     print(i)
+for i in m.matrix:
+    print(i)
+print(m.theta)
+print()
 
 # matrix_example = [
 #     [0, 0, 1, 0, 5],
