@@ -9,8 +9,6 @@ class Hungarian:
         self.dep_zeros = []  # dependent zeros  (primed)
         self.cross_row = []  # crossed row
         self.cross_col = []  # crossed column
-        self.markedRows = []  # row with starred zero
-        self.markedCols = []  # col with starred zero
 
     def reduce_matrix(self):  # method subtracting lowest values from rows and columns
         # rows:
@@ -31,17 +29,44 @@ class Hungarian:
                 self.matrix[i][j] -= min_col_val
 
     def assign(self):
-        for row in range(len(self.matrix)):
-            for col in range(len(self.matrix)):
-                if (row not in self.markedRows) and (col not in self.markedCols) and ((row, col) not in self.ind_zeros) and ((row, col) not in self.dep_zeros) and (self.matrix[row][col] == 0):
-                    self.ind_zeros.append((row, col))
-                    self.markedRows.append(row)
-                    self.markedCols.append(col)
-                if ((row, col) not in self.ind_zeros) and ((row, col) not in self.dep_zeros) and (self.matrix[row][col] == 0):
-                    self.dep_zeros.append((row, col))
-        # zera zalezne sa tylko jesli jest |ind_zeros| < n
-        if len(self.ind_zeros) == len(self.matrix):
-            self.dep_zeros = []
+        ind_zeros = []
+        dep_zeros = []
+        size = len(self.matrix)
+        # Pierwsza iteracja w celu znalezienia pojedynczych zer niezależnych w wierszu
+        for idx, row in enumerate(self.matrix):
+            if row.count(0) == 0:
+                continue
+            elif row.count(0) == 1:
+                for idy, col in enumerate(row):
+                    if col == 0 and idy not in [el[1] for el in ind_zeros]:
+                        ind_zeros.append((idx, idy))
+
+        # Kolejna iteracja w celu znalezienia zera niezależnego w wierszach z większą ilością zer
+        for idx, row in enumerate(self.matrix):
+            added = False
+            for idy, col in enumerate(row):
+                if col == 0 and not added and idy not in [el[1] for el in ind_zeros]:
+                    another_zero_in_col = False
+                    for row_in_col in range(size):
+                        if self.matrix[row_in_col][idy] == 0 and row_in_col != row:
+                            another_zero_in_col = True
+                    if not another_zero_in_col:
+                        added = True
+                        ind_zeros.append((idx, idy))
+
+            if not added:
+                for idy, col in enumerate(row):
+                    if col == 0 and idy not in [el[1] for el in ind_zeros]:
+                        ind_zeros.append((idx, idy))
+                        break
+
+        for row in range(size):
+            for col in range(size):
+                if self.matrix[row][col] == 0 and (row, col) not in ind_zeros:
+                    dep_zeros.append((row, col))
+
+        self.ind_zeros = ind_zeros
+        self.dep_zeros = dep_zeros
 
     def zero_crossing(self):
         select_row = [i for i in range(len(self.matrix))]
@@ -130,8 +155,8 @@ class Hungarian:
             print("Wiersze do wykreślenia: {}".format(self.cross_row))
             print("Kolumny do wykreślenia: {}\n".format(self.cross_col))
 
-            if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
-                break
+            # if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
+            #     break
             self.get_more_independent_zeros()
             print("Macierz po powiększeniu zbioru zer niezależnych")
             for row in self.matrix:
