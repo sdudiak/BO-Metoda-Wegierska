@@ -130,8 +130,8 @@ class Hungarian:
             print("Wiersze do wykreślenia: {}".format(self.cross_row))
             print("Kolumny do wykreślenia: {}\n".format(self.cross_col))
 
-            # if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
-            #     break
+            if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
+                break
             self.get_more_independent_zeros()
             print("Macierz po powiększeniu zbioru zer niezależnych")
             for row in self.matrix:
@@ -164,5 +164,14 @@ matrix_e = [
     [4, 1, 2, 4, 0]
 ]
 
-m = Hungarian(matrix_e)
+matrix_2 = [
+    [3, 2, 4, 5, 2, 1],
+    [7, 3, 4, 5, 1, 1],
+    [2, 2, 3, 4, 5, 6],
+    [1, 3, 4, 5, 6, 2],
+    [2, 1, 3, 2, 4, 5],
+    [4, 4, 2, 0, 2, 3]
+]
+
+m = Hungarian(matrix_2)
 m.algorithm()
