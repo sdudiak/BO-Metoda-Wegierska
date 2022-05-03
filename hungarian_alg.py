@@ -13,7 +13,7 @@ class Hungarian:
     def reduce_matrix(self):  # Metoda odejmująca najmniejszą wartość od wierszy i kolumn
         # wiersze:
         for i, _ in enumerate(self.matrix):
-            self.theta += min(self.matrix[i]) # zwiększenie total matrix reduction
+            self.theta += min(self.matrix[i])  # zwiększenie total matrix reduction
             self.matrix[i] = [elem - min(self.matrix[i])
                               for elem in self.matrix[i]]
         # kolumny:
@@ -23,7 +23,7 @@ class Hungarian:
                 if self.matrix[i][j] < min_col_val:
                     min_col_val = self.matrix[i][j]
 
-            self.theta += min_col_val # zwiększenie total matrix reduction
+            self.theta += min_col_val  # zwiększenie total matrix reduction
 
             for i, _ in enumerate(self.matrix[j]):
                 self.matrix[i][j] -= min_col_val
@@ -33,7 +33,7 @@ class Hungarian:
         dep_zeros = []  # współrzędne zer zależnych
         size = len(self.matrix)  # rozmiar macierzy
 
-        for number in range(1, size):  # Dla liczby zer w wierszu
+        for number in range(1, size + 1):  # Dla liczby zer w wierszu
             for idx, row in enumerate(self.matrix):  # dla każdego wiersza macierzy
                 if row.count(0) == number:  # jeśli liczba zer w wierszu wynosi number
                     added = False  # zmienna do sprawdzania czy znaleziono zero niezalezne
@@ -109,7 +109,7 @@ class Hungarian:
         self.cross_row = cross_row
         self.cross_col = cross_col
 
-    def get_more_independent_zeros(self): # Metoda przeprowadzająca dalszą redukcję macierzy
+    def get_more_independent_zeros(self):  # Metoda przeprowadzająca dalszą redukcję macierzy
         min_matrix_val = inf
         # Wyszukanie najmniejszej wartości w całej macierzy
         for i, _ in enumerate(self.matrix):
@@ -127,7 +127,7 @@ class Hungarian:
                 if j in self.cross_col:
                     continue
                 self.matrix[i][j] -= min_matrix_val
-        self.theta += min_matrix_val # Powiększenie thety o najmniejszą wartość
+        self.theta += min_matrix_val  # Powiększenie thety o najmniejszą wartość
 
     def algorithm(self):
         print("Macierz wejściowa:")
@@ -146,15 +146,15 @@ class Hungarian:
             print("Wyznaczone zera:")
             print("Współrzędne zer niezależnych: {}".format(self.ind_zeros))
             print("Współrzędne zer zależnych: {}\n".format(self.dep_zeros)) if self.dep_zeros else print()
-            if len(self.ind_zeros) == len(self.matrix):
-                break
+            # if len(self.ind_zeros) == len(self.matrix):
+            #     break
 
             self.zero_crossing()  # wyznaczenie wierszy i kolumn do zakreślenia
+            if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
+                break
             print("Wiersze do wykreślenia: {}".format(self.cross_row))
             print("Kolumny do wykreślenia: {}\n".format(self.cross_col))
 
-            # if len(self.cross_col) + len(self.cross_row) == len(self.matrix):
-            #     break
             self.get_more_independent_zeros()  # wyznaczenie wiecej zer niezależnych
             print("Macierz po powiększeniu zbioru zer niezależnych")
             for row in self.matrix:
@@ -174,14 +174,6 @@ class Hungarian:
         print("Optymalny koszt przydziału: {}\n".format(self.theta))
 
 
-matrix_e = [
-    [5, 2, 3, 2, 7],
-    [6, 8, 4, 2, 5],
-    [6, 4, 3, 7, 2],
-    [6, 9, 0, 4, 0],
-    [4, 1, 2, 4, 0]
-]
-
 matrix = [
     [3, 2, 4, 5, 2, 1],
     [7, 3, 4, 5, 1, 1],
@@ -189,6 +181,22 @@ matrix = [
     [1, 3, 4, 5, 6, 2],
     [2, 1, 3, 3, 4, 5],
     [1, 0, 2, 4, 2, 3]
+]
+
+matrix_1 = [
+    [5, 4, 3, 2, 1],
+    [4, 4, 3, 2, 1],
+    [3, 3, 3, 2, 1],
+    [2, 2, 2, 2, 1],
+    [1, 1, 1, 1, 1]
+]
+
+matrix_2 = [
+    [5, 4, 3, 2, 1],
+    [5, 4, 3, 2, 1],
+    [5, 4, 3, 2, 1],
+    [5, 4, 3, 2, 1],
+    [5, 4, 3, 2, 1]
 ]
 
 m = Hungarian(matrix)
