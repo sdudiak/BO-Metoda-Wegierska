@@ -10,22 +10,22 @@ class Hungarian:
         self.cross_row = []  # wiersze do przekreślenia
         self.cross_col = []  # kolumny do przekreślenia
 
-    def reduce_matrix(self):  # method subtracting lowest values from rows and columns
-        # rows:
+    def reduce_matrix(self):  # Metoda odejmująca najmniejszą wartość od wierszy i kolumn
+        # wiersze:
         for i, _ in enumerate(self.matrix):
-            self.theta += min(self.matrix[i])
+            self.theta += min(self.matrix[i]) # zwiększenie total matrix reduction
             self.matrix[i] = [elem - min(self.matrix[i])
                               for elem in self.matrix[i]]
-        # cols:
+        # kolumny:
         for j, _ in enumerate(self.matrix):
             min_col_val = inf
-            for i, _ in enumerate(self.matrix[j]):  # find minimal value
+            for i, _ in enumerate(self.matrix[j]):
                 if self.matrix[i][j] < min_col_val:
                     min_col_val = self.matrix[i][j]
 
-            self.theta += min_col_val
+            self.theta += min_col_val # zwiększenie total matrix reduction
 
-            for i, _ in enumerate(self.matrix[j]):  # subtract minimal value
+            for i, _ in enumerate(self.matrix[j]):
                 self.matrix[i][j] -= min_col_val
 
     def assign(self):
@@ -109,27 +109,25 @@ class Hungarian:
         self.cross_row = cross_row
         self.cross_col = cross_col
 
-    # method for further matrix reduction
-    def get_more_independent_zeros(self):
+    def get_more_independent_zeros(self): # Metoda przeprowadzająca dalszą redukcję macierzy
         min_matrix_val = inf
-        # find minimal value uncrossed value in matrix
+        # Wyszukanie najmniejszej wartości w całej macierzy
         for i, _ in enumerate(self.matrix):
             for j, _ in enumerate(self.matrix[i]):
                 if i not in self.cross_row and j not in self.cross_col and self.matrix[i][j] < min_matrix_val:
                     min_matrix_val = self.matrix[i][j]
-        # add minval
-        # subtract minimal value from uncrossed elems
+        # Odjęcie najmniejszej wartości od wszystkich nieskreślonych elementów
         for i, _ in enumerate(self.matrix):
             for j, _ in enumerate(self.matrix[i]):
                 if i in self.cross_row and j not in self.cross_col:
                     continue
                 if i in self.cross_row and j in self.cross_col:
-                    # add minimal value to double crossed elements
+                    # Dodanie najmniejszej wartości do podwójnie przekreślonych elementów
                     self.matrix[i][j] += min_matrix_val
                 if j in self.cross_col:
                     continue
                 self.matrix[i][j] -= min_matrix_val
-        self.theta += min_matrix_val
+        self.theta += min_matrix_val # Powiększenie thety o najmniejszą wartość
 
     def algorithm(self):
         print("Macierz wejściowa:")
